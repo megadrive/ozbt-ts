@@ -1,5 +1,5 @@
 {
-    "name": "andy-ts-boilerplate",
+    "name": "ozbt-ts",
     "version": "0.0.1",
     "description": "",
     "main": "index.js",
@@ -18,11 +18,24 @@
         "prettier": "^1.16.4",
         "pretty-quick": "^1.10.0",
         "ts-jest": "^23.10.5",
+        "ts-node": "^8.2.0",
         "typescript": "^3.3.3"
     },
     "husky": {
         "hooks": {
             "pre-commit": "pretty-quick --staged"
         }
+    },
+    "dependencies": {
+        "@types/chance": "^1.0.4",
+        "@types/node-fetch": "^2.3.4",
+        "better-sqlite-pool": "^0.2.2",
+        "chance": "^1.0.18",
+        "enmap": "^4.8.7",
+        "howlongtobeat": "^1.1.1",
+        "json-override": "^0.2.0",
+        "node-fetch": "^2.6.0",
+        "twas": "^2.1.0",
+        "twitch-js": "^2.0.0-beta.30"
     }
 }
