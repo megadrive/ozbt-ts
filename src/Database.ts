@@ -5,14 +5,14 @@ export class Database {
      * Gets a database.
      *
      * @param name Name of the database to get.
+     * @param fetchAll Whether or not to fetch all entries.
      * @returns Promise resolves when database is ready.
      */
-    getDatabase(name: string): Enmap {
-        const enmap = new Enmap({
+    getDatabase(name: string, fetchAll?: boolean): Enmap {
+        return new Enmap({
             name,
             autoFetch: true,
-            fetchAll: false,
+            fetchAll: fetchAll ? fetchAll : false,
         });
-        return enmap;
     }
 }

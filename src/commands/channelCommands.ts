@@ -109,33 +109,34 @@ export class ChannelCommandFind extends Command {
             const [searchTerm] = options.arguments;
             if (searchTerm) {
                 // check for command existance
-                const commands = new Database().getDatabase(options.channel);
-                // Enmap seems to require a .then for size and such to be the correct values,
-                // await doesn't seem to work in this instance.
-                commands.defer.then(() => {
-                    if (commands.size > 0) {
-                        const matched = commands
-                            .keyArray()
-                            .map(trigger =>
-                                (trigger as string)
-                                    .toLowerCase()
-                                    .includes(searchTerm.toLowerCase())
-                                    ? trigger
-                                    : undefined
-                            )
-                            .filter(element => element !== undefined);
+                const commands = new Database().getDatabase(
+                    options.channel,
+                    true
+                );
+                await commands.defer;
 
-                        options.reply(
-                            `your search matched ${
-                                matched.length
-                            } commands: ${matched.slice(0, 5).join(", ")}`
-                        );
-                    } else {
-                        options.reply(
-                            `no commands match your search term: ${searchTerm}.`
-                        );
-                    }
-                });
+                if (commands.size > 0) {
+                    const matched = commands
+                        .keyArray()
+                        .map(trigger =>
+                            (trigger as string)
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase())
+                                ? trigger
+                                : undefined
+                        )
+                        .filter(element => element !== undefined);
+
+                    options.reply(
+                        `${matched.length} found: ${matched
+                            .slice(0, 30)
+                            .join(", ")}`
+                    );
+                } else {
+                    options.reply(
+                        `no commands match your search term: ${searchTerm}.`
+                    );
+                }
             } else {
                 throw "Command requires a trigger and text: !find [searchTerm]";
             }
