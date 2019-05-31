@@ -127,3 +127,4 @@ $RECYCLE.BIN/
 dist/
 config.json
 *.sqlite
+*.sqlite-*
