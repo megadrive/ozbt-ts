@@ -2,6 +2,7 @@
 
 import { Command, ICommandRunOptions } from "../Command";
 import twas from "twas";
+import { URLSearchParams } from "url";
 
 export class Uptime extends Command {
     constructor() {
@@ -19,9 +20,9 @@ export class Uptime extends Command {
             ? argChannelToCheck
             : options.channel.slice(1);
 
-        const streamInfo = await api.get(
-            "streams?user_login=" + channelToCheck
-        );
+        const params = new URLSearchParams();
+        params.append("user_login", channelToCheck);
+        const streamInfo = await api.get("streams", params);
 
         if (streamInfo.length > 0) {
             const when = twas(Date.parse(streamInfo[0].started_at));
