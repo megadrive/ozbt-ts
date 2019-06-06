@@ -1,6 +1,7 @@
 import { Command } from "./Command";
 import { OzbtApi } from "./Api";
 import { Database } from "./Database";
+import { CooldownManager } from "./CooldownManager";
 
 export interface ICommandHandlerOptions {
     prefix: string;
@@ -13,6 +14,8 @@ export class CommandHandler {
     options: ICommandHandlerOptions;
 
     commands = new Map<string, Command>();
+
+    cooldowns = new CooldownManager();
 
     api: OzbtApi | null = null;
 
@@ -63,8 +66,8 @@ export class CommandHandler {
                     return command;
                 }
             })
-            .filter(element => {
-                return element !== undefined;
+            .filter(command => {
+                return command !== undefined;
             }) as Command[];
 
         return matchedCommands.length ? matchedCommands[0] : null;
@@ -82,7 +85,8 @@ export class CommandHandler {
 
         if (
             commandToRun &&
-            this.userHasPermission(privmsg.badges, commandToRun)
+            this.userHasPermission(privmsg.badges, commandToRun) &&
+            this.cooldowns.check(privmsg.channel, commandToRun.trigger)
         ) {
             commandToRun.run({
                 api: this.api,
@@ -95,13 +99,19 @@ export class CommandHandler {
                     privmsg.username
                 ),
             });
+
+            this.cooldowns.set(privmsg.channel, commandToRun.trigger);
         } else {
             // Could be a custom command! Wowser!
             const database = new Database().getDatabase(privmsg.channel);
             database.defer.then(() => {
-                if (database.has(trigger)) {
+                if (
+                    database.has(trigger) &&
+                    this.cooldowns.check(privmsg.channel, trigger)
+                ) {
                     const responseText = database.get(trigger);
                     this.chat.say(privmsg.channel, responseText);
+                    this.cooldowns.set(privmsg.channel, trigger);
                 }
             });
         }
