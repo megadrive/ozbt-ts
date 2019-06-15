@@ -2,9 +2,12 @@ import { Command } from "./Command";
 import { OzbtApi } from "./Api";
 import { Database } from "./Database";
 import { CooldownManager } from "./CooldownManager";
+import { Permissions, EPermission } from "./Permissions";
 
 export interface ICommandHandlerOptions {
     prefix: string;
+
+    cooldownTime?: number;
 }
 
 /**
@@ -15,7 +18,7 @@ export class CommandHandler {
 
     commands = new Map<string, Command>();
 
-    cooldowns = new CooldownManager();
+    cooldowns: CooldownManager;
 
     api: OzbtApi | null = null;
 
@@ -24,16 +27,24 @@ export class CommandHandler {
 
     constructor(options: ICommandHandlerOptions) {
         this.options = options;
+
+        this.cooldowns = new CooldownManager({
+            cooldownTime: options.cooldownTime,
+        });
     }
 
     /**
      * Verifies if an arbitrary user has permission.
-     * @param userTags the `tags` property from a PRIVMSG event.
+     * @param privmsg PRIVMSG
      * @param command Command to verify.
      * @todo Implement.
      */
-    userHasPermission(userTags: any, command: Command): boolean {
-        return true;
+    userHasPermission(
+        privmsg: any,
+        command: Command,
+        permission: EPermission
+    ): boolean {
+        return Permissions.has(privmsg.channel, privmsg, permission);
     }
 
     /**
@@ -85,7 +96,11 @@ export class CommandHandler {
 
         if (
             commandToRun &&
-            this.userHasPermission(privmsg.badges, commandToRun) &&
+            this.userHasPermission(
+                privmsg,
+                commandToRun,
+                commandToRun.permission
+            ) &&
             this.cooldowns.check(privmsg.channel, commandToRun.trigger)
         ) {
             commandToRun.run({
@@ -105,8 +120,12 @@ export class CommandHandler {
             // Could be a custom command! Wowser!
             const database = new Database().getDatabase(privmsg.channel);
             database.defer.then(() => {
+                const permission = trigger.permission
+                    ? trigger.permission
+                    : EPermission.EVERYONE;
                 if (
                     database.has(trigger) &&
+                    Permissions.has(privmsg.channel, privmsg, permission) &&
                     this.cooldowns.check(privmsg.channel, trigger)
                 ) {
                     const responseText = database.get(trigger);
@@ -125,7 +144,7 @@ export class CommandHandler {
     createSayFunction(channel: string): Function {
         return (message: string, mention?: string) => {
             if (mention) message += ` @${mention.replace(/@/g, "")}`;
-            this.chat.say(channel, message);
+            return this.chat.say(channel, message);
         };
     }
 
@@ -136,7 +155,7 @@ export class CommandHandler {
      */
     createReplyFunction(channel: string, username: string): Function {
         return (message: string) => {
-            this.chat.say(channel, `@${username}, ${message}`);
+            return this.chat.say(channel, `@${username}, ${message}`);
         };
     }
 }

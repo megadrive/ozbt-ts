@@ -2,6 +2,7 @@
 
 import { Command, ICommandRunOptions } from "../Command";
 import { Database } from "../Database";
+import { EPermission } from "../Permissions";
 
 /**
  * Adds a command. Moderators and broadcasters only.
@@ -11,6 +12,7 @@ export class ChannelCommandAdd extends Command {
         super({
             name: "addcom",
             triggers: ["addcom"],
+            permissionThreshold: EPermission.MODERATOR,
         });
     }
 
@@ -57,6 +59,7 @@ export class ChannelCommandDelete extends Command {
         super({
             name: "delcom",
             triggers: ["delcom"],
+            permissionThreshold: EPermission.MODERATOR,
         });
     }
 

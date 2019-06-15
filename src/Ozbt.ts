@@ -21,6 +21,12 @@ interface IOzbtOptions {
 
     /** Client-ID for API requests. */
     clientId?: string;
+
+    /** Owner username of the bot. */
+    owner?: string;
+
+    /** Default cooldown period between commands in seconds. */
+    commandCooldown: number;
 }
 
 export class Ozbt {
@@ -28,6 +34,7 @@ export class Ozbt {
     twitch: any;
     chatConstants: any;
     api: OzbtApi | null = null;
+    owner: string | null = null;
 
     constructor(options: IOzbtOptions) {
         if (options.prefix === undefined) {
@@ -45,6 +52,10 @@ export class Ozbt {
         });
         this.twitch = chat;
         this.chatConstants = chatConstants;
+
+        if (options.owner) {
+            this.owner = options.owner;
+        }
 
         if (options.clientId) {
             this.commandHandler.api = new OzbtApi({

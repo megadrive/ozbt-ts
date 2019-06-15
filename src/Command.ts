@@ -1,4 +1,5 @@
 import { CommandHandler } from "./CommandHandler";
+import { EPermission } from "./Permissions";
 
 /**
  * Options for a Command, meant to be overridden.
@@ -11,6 +12,9 @@ export interface ICommandOptions {
      * Triggers, first element will be set as the main trigger, with the rest set as aliases.
      */
     triggers: string[];
+
+    /** Permission threshold */
+    permissionThreshold?: EPermission;
 }
 
 export interface ICommandRunOptions {
@@ -33,12 +37,6 @@ export interface ICommandRunOptions {
     raw: any;
 }
 
-export enum ECommandPermission {
-    EVERYBODY = 0,
-    MODERATORS,
-    BROADCASTER,
-}
-
 /**
  * Represents a Command, which is run after a trigger is seen in chat.
  */
@@ -50,6 +48,8 @@ export class Command {
     handler: CommandHandler | null;
     options: ICommandOptions;
 
+    permission: EPermission = EPermission.EVERYONE;
+
     /**
      * Creates an instance of Command.
      */
@@ -60,6 +60,9 @@ export class Command {
         [this.trigger, ...this.aliases] = options.triggers;
 
         this.handler = null;
+
+        if (options.permissionThreshold)
+            this.permission = options.permissionThreshold;
     }
 
     /**
