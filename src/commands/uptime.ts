@@ -3,12 +3,14 @@
 import { Command, ICommandRunOptions } from "../Command";
 import twas from "twas";
 import { URLSearchParams } from "url";
+import { EPermission } from "../Permissions";
 
 export class Uptime extends Command {
     constructor() {
         super({
             name: "uptime",
             triggers: ["uptime"],
+            permissionThreshold: EPermission.EVERYONE,
         });
     }
 

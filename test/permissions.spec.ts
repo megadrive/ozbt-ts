@@ -73,3 +73,15 @@ describe("moderator", () => {
         ).toBeFalsy();
     });
 });
+
+describe("everyone", () => {
+    test("broadcaster", () => {
+        expect(
+            Permissions.has(channel, privmsg.ownerBroadcaster, undefined)
+        ).toBeTruthy();
+        expect(
+            Permissions.has(channel, privmsg.moderator, undefined)
+        ).toBeTruthy();
+        expect(Permissions.has(channel, privmsg.user, undefined)).toBeTruthy();
+    });
+});

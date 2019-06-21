@@ -1,4 +1,5 @@
 import { Command, ICommandRunOptions } from "../Command";
+import { EPermission } from "../Permissions";
 
 const hltb = require("howlongtobeat");
 const hltbService = new hltb.HowLongToBeatService();
@@ -10,6 +11,7 @@ export class HowLongToBeatCommand extends Command {
         super({
             name: "howlong",
             triggers: ["hltb", "howlong", "howlongtobeat"],
+            permissionThreshold: EPermission.EVERYONE,
         });
     }
 

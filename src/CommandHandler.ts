@@ -3,6 +3,7 @@ import { OzbtApi } from "./Api";
 import { Database } from "./Database";
 import { CooldownManager } from "./CooldownManager";
 import { Permissions, EPermission } from "./Permissions";
+import { Logger } from "./Logger";
 
 export interface ICommandHandlerOptions {
     prefix: string;
@@ -25,12 +26,16 @@ export class CommandHandler {
     /** TwitchJS chat module. */
     chat: any;
 
+    log = Logger.create("CommandHandler");
+
     constructor(options: ICommandHandlerOptions) {
         this.options = options;
 
         this.cooldowns = new CooldownManager({
             cooldownTime: options.cooldownTime,
         });
+
+        this.log.info(`Using prefix "${options.prefix}"`);
     }
 
     /**

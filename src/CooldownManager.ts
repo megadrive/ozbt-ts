@@ -1,4 +1,5 @@
 import { Command } from "./Command";
+import { Logger } from "./Logger";
 
 interface ICooldownManagerOptions {
     /** In seconds. Default: 30 */
@@ -8,11 +9,14 @@ interface ICooldownManagerOptions {
 export class CooldownManager {
     cooldowns = new Map<string, Map<string, number>>();
     cooldownTime: number = 30;
+    log = Logger.create("CooldownManager");
 
     constructor(options?: ICooldownManagerOptions) {
         if (options && options.cooldownTime) {
             this.cooldownTime = options.cooldownTime;
         }
+
+        this.log.info(`Using a cooldowntime of ${this.cooldownTime}`);
     }
 
     /**

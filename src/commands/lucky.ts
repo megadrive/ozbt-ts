@@ -2,6 +2,7 @@
 
 import { Command, ICommandRunOptions } from "../Command";
 import Chance from "chance";
+import { EPermission } from "../Permissions";
 const chance = new Chance();
 
 export class Lucky extends Command {
@@ -9,6 +10,7 @@ export class Lucky extends Command {
         super({
             name: "lucky",
             triggers: ["lucky"],
+            permissionThreshold: EPermission.EVERYONE,
         });
     }
 
@@ -52,9 +54,7 @@ export class Lucky extends Command {
         } Results - heads: ${heads}, tails: ${tails}.`;
 
         options.say(
-            `/timeout ${
-                options.raw.username
-            } 1s In russia, roulette roulettes you.`
+            `/timeout ${options.raw.username} 1s In russia, roulette roulettes you.`
         );
         options.say(say);
     }

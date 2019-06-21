@@ -1,7 +1,7 @@
 const options = require("env-smart").load();
 
 export enum EPermission {
-    EVERYONE = 0,
+    EVERYONE = 1,
     MODERATOR,
     BROADCASTER,
     OWNER,
@@ -30,9 +30,12 @@ export class Permissions {
     static has(
         channel: string,
         privmsg: any,
-        expectedPermission: EPermission
+        expectedPermission?: EPermission
     ): boolean {
-        if (EPermission.EVERYONE) {
+        if (
+            !expectedPermission ||
+            expectedPermission === EPermission.EVERYONE
+        ) {
             return true;
         }
 
