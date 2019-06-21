@@ -129,3 +129,4 @@ config.json
 *.sqlite
 *.sqlite-*
 *.csv
+logs/

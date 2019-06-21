@@ -129,7 +129,16 @@ export class CommandHandler {
                     this.cooldowns.check(privmsg.channel, trigger)
                 ) {
                     const responseText = database.get(trigger);
-                    this.chat.say(privmsg.channel, responseText);
+                    const replacedArgsInResponseText = args.reduce(
+                        (acc: string, val: string, i: number) => {
+                            return acc.replace(
+                                new RegExp(`\\{${i + 1}\\}`, "gi"),
+                                val
+                            );
+                        },
+                        responseText
+                    );
+                    this.chat.say(privmsg.channel, replacedArgsInResponseText);
                     this.cooldowns.set(privmsg.channel, trigger);
                 }
             });

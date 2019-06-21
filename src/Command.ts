@@ -1,5 +1,7 @@
 import { CommandHandler } from "./CommandHandler";
 import { EPermission } from "./Permissions";
+import { Logger } from "./Logger";
+import winston = require("winston");
 
 /**
  * Options for a Command, meant to be overridden.
@@ -50,6 +52,9 @@ export class Command {
 
     permission: EPermission = EPermission.EVERYONE;
 
+    /** Logger, set via super() */
+    log: winston.Logger;
+
     /**
      * Creates an instance of Command.
      */
@@ -63,6 +68,10 @@ export class Command {
 
         if (options.permissionThreshold)
             this.permission = options.permissionThreshold;
+
+        this.log = Logger.create(this.name);
+
+        this.log.info(`Added command "${this.name}"`);
     }
 
     /**

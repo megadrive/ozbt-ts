@@ -1,5 +1,6 @@
 import { CommandHandler } from "./CommandHandler";
 import { OzbtApi } from "./Api";
+import { Logger } from "./Logger";
 
 const TwitchJS = require("twitch-js").default; // awaiting types
 
@@ -35,6 +36,7 @@ export class Ozbt {
     chatConstants: any;
     api: OzbtApi | null = null;
     owner: string | null = null;
+    log = Logger.create("ozbt");
 
     constructor(options: IOzbtOptions) {
         if (options.prefix === undefined) {
@@ -66,7 +68,7 @@ export class Ozbt {
 
         if (options.connectImmediately) {
             this.connect().then(() => {
-                console.log(`Logged in as ${options.username}.`);
+                this.log.info(`Logged in as ${options.username}.`);
 
                 if (options.channels) {
                     this.joinChannels(options.channels);
@@ -86,7 +88,7 @@ export class Ozbt {
                 );
             });
         } catch (error) {
-            console.error(`Could not connect to Twitch: ${error}`);
+            this.log.error(`Could not connect to Twitch: ${error}`);
             process.exit(1);
         }
     }
@@ -94,8 +96,9 @@ export class Ozbt {
     async joinChannels(channels: string[]): Promise<void> {
         try {
             channels.forEach(async channel => {
-                console.log(`Joining ${channel}`);
+                this.log.info(`Joining ${channel}`);
                 await this.twitch.join(channel);
+                this.log.info(`Joined  ${channel}`);
             });
         } catch (error) {
             throw new Error("Could not join channels: " + channels);

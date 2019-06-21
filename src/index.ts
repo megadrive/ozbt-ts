@@ -6,6 +6,7 @@ import {
     ChannelCommandAdd,
     ChannelCommandFind,
     ChannelCommandDelete,
+    ChannelCommandEdit,
 } from "./commands/channelCommands";
 import { HowLongToBeatCommand } from "./commands/howLongToBeat";
 
@@ -23,6 +24,7 @@ bot.commandHandler
     .add(new UptimeCommand())
     .add(new LuckyCommand())
     .add(new ChannelCommandAdd())
+    .add(new ChannelCommandEdit())
     .add(new ChannelCommandDelete())
     .add(new ChannelCommandFind())
     .add(new HowLongToBeatCommand());

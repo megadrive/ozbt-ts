@@ -11,7 +11,7 @@ export class ChannelCommandAdd extends Command {
     constructor() {
         super({
             name: "addcom",
-            triggers: ["addcom"],
+            triggers: ["addcom", "+com"],
             permissionThreshold: EPermission.MODERATOR,
         });
     }
@@ -52,13 +52,58 @@ export class ChannelCommandAdd extends Command {
 }
 
 /**
+ * Edits a command. Moderators and broadcasters only.
+ */
+export class ChannelCommandEdit extends Command {
+    constructor() {
+        super({
+            name: "editcom",
+            triggers: ["editcom", ":com"],
+            permissionThreshold: EPermission.MODERATOR,
+        });
+    }
+
+    /**
+     * Expected input: !editcom [trigger] [...text]
+     */
+    async run(options: ICommandRunOptions) {
+        try {
+            const [trigger, ...text] = options.arguments;
+            if (trigger) {
+                const commands = new Database().getDatabase(options.channel);
+                await commands.defer;
+                const textToChange = text.join(" ");
+
+                if (commands.has(trigger)) {
+                    commands.set(trigger, textToChange);
+                    options.reply(
+                        `command ${trigger} has been changed to ${textToChange}.`
+                    );
+                } else {
+                    options.reply(`no command with the trigger ${trigger}.`);
+                }
+            } else {
+                throw "Command requires a trigger to edit: !editcom [trigger] [...text]";
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                options.say("JS Error occurred, check console.");
+                console.error(error);
+            } else {
+                options.say(error);
+            }
+        }
+    }
+}
+
+/**
  * Deletes a command. Moderators and broadcasters only.
  */
 export class ChannelCommandDelete extends Command {
     constructor() {
         super({
             name: "delcom",
-            triggers: ["delcom"],
+            triggers: ["delcom", "-com"],
             permissionThreshold: EPermission.MODERATOR,
         });
     }
