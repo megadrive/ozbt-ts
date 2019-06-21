@@ -28,9 +28,3 @@ $ tsc
 ```
 $ node dist/index.js
 ```
-
-Or skip compiling and just use `npx`:
-
-```
-$ npx ts-node src/
-```
