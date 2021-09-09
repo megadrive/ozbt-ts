@@ -1,5 +1,7 @@
 # ozbt-ts
 
+**doing a rework, this repo is archived. ignore.**
+
 A Twitch bot for you; designed to be simple and extensible. Hosted by you.
 
 Proper instructions to follow.
